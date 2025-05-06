@@ -7,36 +7,36 @@ const SALT_ROUNDS = 10;
 export class authController {
   static createAccount = async (req: Request, res: Response) => {
     try {
-      const { nameUser, emailUser, passwordUser } = req.body;
+      const { username, email, password } = req.body;
 
       // Validar campos obligatorios
-      if (!nameUser || !emailUser || !passwordUser) {
+      if (!username || !email || !password) {
         res.status(400).json({ message: "Todos los campos son obligatorios" });
         return;
       }
 
       // Verificar si el email ya está registrado
-      const existingUser = await User.findOne({ where: { emailUser } });
+      const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         res.status(409).json({ message: "El correo ya está registrado" });
         return;
       }
 
       // Hash de la contraseña
-      const hashedPassword = await bcrypt.hash(passwordUser, SALT_ROUNDS);
+      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
       // Crear nuevo usuario
       const newUser = await User.create({
-        nameUser,
-        emailUser,
-        passwordUser: hashedPassword,
+        username,
+        email,
+        password: hashedPassword,
       });
       res.status(201).json({
         message: "Cuenta creada exitosamente",
         user: {
           id: newUser.id,
-          nameUser: newUser.nameUser,
-          emailUser: newUser.emailUser,
+          username: newUser.username,
+          email: newUser.email,
         },
       });
 
@@ -50,65 +50,65 @@ export class authController {
 
   static login = async (req: Request, res: Response) => {
     try {
-      const { emailUser, passwordUser } = req.body;
+      const { email, password } = req.body;
 
       // Validar campos obligatorios
-      if (!emailUser || !passwordUser) {
+      if (!email || !password) {
         res
           .status(400)
-          .json({ message: "Correo y contraseña son obligatorios" });
+          .send("Correo y contraseña son obligatorios");
         return;
       }
 
       // Buscar el usuario por email
-      const user = await User.findOne({ where: { emailUser } });
+      const user = await User.findOne({ where: { email } });
       if (!user) {
-        res.status(401).json({ message: "Correo o contraseña incorrectos" });
+        res.status(401).send("Correo no registrado");
         return;
       }
 
       // Comparar contraseñas
       const isPasswordValid = await bcrypt.compare(
-        passwordUser,
-        user.passwordUser
+        password,
+        user.password
       );
       if (!isPasswordValid) {
-        res.status(401).json({ message: "Correo o contraseña incorrectos" });
+        res.status(401).send("Contraseña incorrecta");
         return;
       }
-      const token = generateJWT({id:user.id})
+      const token = generateJWT({ id: user.id })
       res.status(200).send(token);
       return;
     } catch (error) {
       console.error("Error en login:", error);
-      res.status(500).json({ message: "Error del servidor" });
+      res.status(500).send("Error del servidor");
       return;
     }
   };
 
   static updatePassword = async (req: Request, res: Response) => {
     try {
-      const { emailUser, newPassword } = req.body;
-  
+      const { email, newPassword } = req.body;
+
       // Validar campos obligatorios
-      if (!emailUser || !newPassword) {
+      if (!email || !newPassword) {
         res.status(400).json({ message: "Correo y nueva contraseña son obligatorios" });
         return;
       }
-  
+
       // Buscar el usuario por email
-      const user = await User.findOne({ where: { emailUser } });
+      const user = await User.findOne({ where: { email } });
       if (!user) {
         res.status(404).json({ message: "Usuario no encontrado" });
         return;
       }
-  
+
       // Hash de la nueva contraseña
       const hashedNewPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
-  
+
       // Actualizar contraseña
-      await user.update({ passwordUser: hashedNewPassword });
-  
+      await user.update({ password: hashedNewPassword });
+
       res.status(200).json({ message: "Contraseña actualizada correctamente 👌" });
       return;
     } catch (error) {
@@ -117,4 +117,9 @@ export class authController {
       return;
     }
   };
+
+  static user = async (req: Request, res: Response) => {
+    res.json(req.user)
+    return
+  }
 }

@@ -11,19 +11,19 @@ class User extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  declare nameUser: string;
+  declare username: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    declare emailUser: string;
+    declare email: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    declare passwordUser: string;
+    declare password: string;
 }
 
 export default User;

@@ -1,12 +1,15 @@
 import express from "express";
 import dotenv from 'dotenv'
+import cors from 'cors'
 import db from "./config/db";
 import colors from 'colors'
 import consecutiveRouter from "./routes/consecutivesRoutes";
 import authRouter from  "./routes/authRoutes"
+import { corsConfig } from "./config/cors";
 dotenv.config()
 const app = express()
-
+//Cors
+app.use(cors(corsConfig))
 //connect to db
 async function connectDB(){
     try {

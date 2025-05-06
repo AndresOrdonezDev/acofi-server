@@ -7,7 +7,7 @@ export class consecutiveRequestController {
   static newConsecutiveRequest = async (req: Request, res: Response) => {
     try {
       const currentYear = new Date().getFullYear()
-      const { acronym, addressee, topic } = req.body;
+      const { acronym, addressee,requestedBy, topic } = req.body;
       // 1️⃣ Obtener el consecutivo más reciente
       const lastConsecutive = await ConsecutiveRequested.findOne({
         order: [["createdAt", "DESC"]], // el más reciente
@@ -35,6 +35,7 @@ export class consecutiveRequestController {
         consecutive: newConsecutiveCode,
         addressee,
         topic,
+        requestedBy,
         userId: req.user.id || 1,
       });
 
@@ -44,15 +45,15 @@ export class consecutiveRequestController {
       res.status(500).send("Algo salió mal");
     }
   };
-  static getAllConsecutives = async (req: Request, res: Response) => {
+  static getAllConsecutive = async (req: Request, res: Response) => {
     try {
-      const consecutives = await ConsecutiveRequested.findAll({
+      const consecutive = await ConsecutiveRequested.findAll({
         include: [{
           model: User,
-          attributes: ['id', 'nameUser', 'emailUser'] // solo las columnas que quieres traer
+          attributes: ['id', 'username', 'email'] // solo las columnas que quieres traer
         }]
       });
-      res.json(consecutives);
+      res.json(consecutive);
     } catch (error) {
       console.log(error);
       res.status(500).send("Error al obtener los consecutivos");

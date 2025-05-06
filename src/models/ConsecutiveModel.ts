@@ -24,6 +24,12 @@ class ConsecutiveRequested extends Model {
   })
   declare topic: string
 
+  @Column({
+    type: DataType.STRING(200),
+    allowNull: false
+  })
+  declare requestedBy: string
+
   // Foreign Key
   @ForeignKey(() => User)
   @Column({

@@ -6,8 +6,8 @@ dotenv.config();
 
 type IUser = {
   id?: number;
-  nameUser: string;
-  emailUser: string;
+  username: string;
+  email: string;
 };
 
 declare global {
@@ -45,7 +45,7 @@ export const authenticate = async (
     if (typeof decoded === "object" && decoded.id) {
 
       const user = await User.findByPk(decoded.id, {
-        attributes: ["id", "nameUser", "emailUser"],
+        attributes: ["id", "username", "email"],
       });
       
       if (user) {

@@ -7,7 +7,7 @@ const router = Router()
 router.post('/',authenticate,consecutiveRequestController.newConsecutiveRequest)
 
 
-router.get('/',authenticate, consecutiveRequestController.getAllConsecutives)
+router.get('/',authenticate, consecutiveRequestController.getAllConsecutive)
 
 
 export default router

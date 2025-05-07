@@ -7,7 +7,7 @@ const SALT_ROUNDS = 10;
 export class authController {
   static createAccount = async (req: Request, res: Response) => {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, isAdmin} = req.body;
 
       // Validar campos obligatorios
       if (!username || !email || !password) {
@@ -30,6 +30,7 @@ export class authController {
         username,
         email,
         password: hashedPassword,
+        isAdmin
       });
       res.status(201).json({
         message: "Cuenta creada exitosamente",
@@ -80,7 +81,6 @@ export class authController {
       res.status(200).send(token);
       return;
     } catch (error) {
-      console.error("Error en login:", error);
       res.status(500).send("Error del servidor");
       return;
     }

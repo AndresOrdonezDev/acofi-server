@@ -45,7 +45,7 @@ export const authenticate = async (
     if (typeof decoded === "object" && decoded.id) {
 
       const user = await User.findByPk(decoded.id, {
-        attributes: ["id", "username", "email"],
+        attributes: ["id", "username", "email",'isAdmin'],
       });
       
       if (user) {
